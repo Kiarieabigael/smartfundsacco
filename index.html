@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFJND Sacco</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            color: #4b0082;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #6a5acd;
+        }
+        .section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to SmartFJND Sacco</h1>
+        <p>Manage your shares and savings</p>
+
+        <div class="section">
+            <h2>Shares</h2>
+            <button onclick="window.location.href='view_shares.html'">View Shares</button>
+            <button onclick="window.location.href='deposit_shares.html'">Deposit Shares</button>
+            <button onclick="window.location.href='withdraw_shares.html'">Withdraw Shares</button>
+        </div>
+
+        <div class="section">
+            <h2>Savings</h2>
+            <button onclick="window.location.href='view_savings.html'">View Savings</button>
+            <button onclick="window.location.href='deposit_savings.html'">Deposit Savings</button>
+            <button onclick="window.location.href='withdraw_savings.html'">Withdraw Savings</button>
+        </div>
+    </div>
+</body>
+</html>
