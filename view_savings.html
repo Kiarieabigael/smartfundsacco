@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Savings</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            color: #4b0082;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #6a5acd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Savings</h1>
+        <div id="savingsDetails">
+            <p>Savings Balance: <span id="savingsBalance">Loading...</span></p>
+        </div>
+        <button onclick="window.location.href='index.html'">Back</button>
+    </div>
+
+    <script>
+        const userId = 1;  // Assume a fixed user ID for simplicity
+
+        async function fetchSavings() {
+            const response = await fetch(`/get_savings?user_id=${userId}`);
+            const result = await response.json();
+            document.getElementById('savingsBalance').textContent = result.savings_balance;
+        }
+
+        fetchSavings();  // Fetch savings data when the page loads
+    </script>
+</body>
+</html>
