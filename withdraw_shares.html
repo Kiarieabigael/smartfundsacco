@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw Shares</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            color: #4b0082;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #6a5acd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Withdraw Shares</h1>
+        <input type="number" id="withdrawAmount" placeholder="Enter amount">
+        <button onclick="withdraw()">Withdraw</button>
+        <button onclick="window.location.href='index.html'">Back</button>
+    </div>
+
+    <script>
+        const userId = 1;  // Assume a fixed user ID for simplicity
+
+        async function withdraw() {
+            const amount = parseFloat(document.getElementById('withdrawAmount').value);
+            const response = await fetch('/withdraw_shares', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            window.location.href = 'view_shares.html';  // Redirect to view shares page
+        }
+    </script>
+</body>
+</html>
