@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartFJND Sacco</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            color: #4b0082;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #6a5acd;
+        }
+        .section {
+            margin-top: 20px;
+        }
+        .back-button {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Welcome to SmartFJND Sacco</h1>
+        <p>Manage your shares and savings</p>
+
+        <div class="section">
+            <h2>Shares</h2>
+            <button onclick="viewShares()">View Shares</button>
+            <button onclick="depositShares()">Deposit Shares</button>
+            <button onclick="withdrawShares()">Withdraw Shares</button>
+            <div id="sharesDetails"></div>
+        </div>
+
+        <div class="section">
+            <h2>Savings</h2>
+            <button onclick="viewSavings()">View Savings</button>
+            <button onclick="depositSavings()">Deposit Savings</button>
+            <button onclick="withdrawSavings()">Withdraw Savings</button>
+            <div id="savingsDetails"></div>
+        </div>
+
+        <!-- Back Button -->
+        <div class="back-button">
+            <button onclick="goBack()">Back</button>
+        </div>
+    </div>
+
+    <script>
+        const userId = 1;  // Assume a fixed user ID for simplicity
+
+        async function viewShares() {
+            const response = await fetch(`/get_shares?user_id=${userId}`);
+            const result = await response.json();
+            document.getElementById('sharesDetails').innerHTML = `
+                <p>Share Balance: ${result.share_balance}</p>
+                <p>Last Deposit Date: ${result.share_deposit_date || 'N/A'}</p>
+            `;
+        }
+
+        async function depositShares() {
+            const amount = parseFloat(prompt("Enter amount to deposit into shares:"));
+            const response = await fetch('/deposit_shares', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            viewShares();  // Refresh shares details
+        }
+
+        async function withdrawShares() {
+            const amount = parseFloat(prompt("Enter amount to withdraw from shares:"));
+            const response = await fetch('/withdraw_shares', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            viewShares();  // Refresh shares details
+        }
+
+        async function viewSavings() {
+            const response = await fetch(`/get_savings?user_id=${userId}`);
+            const result = await response.json();
+            document.getElementById('savingsDetails').innerHTML = `
+                <p>Savings Balance: ${result.savings_balance}</p>
+            `;
+        }
+
+        async function depositSavings() {
+            const amount = parseFloat(prompt("Enter amount to deposit into savings:"));
+            const response = await fetch('/deposit_savings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            viewSavings();  // Refresh savings details
+        }
+
+        async function withdrawSavings() {
+            const amount = parseFloat(prompt("Enter amount to withdraw from savings:"));
+            const response = await fetch('/withdraw_savings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId, amount: amount }),
+            });
+            const result = await response.json();
+            alert(result.message);
+            viewSavings();  // Refresh savings details
+        }
+
+        // Function to go back to the previous page
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>
