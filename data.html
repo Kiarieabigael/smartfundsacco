@@ -1,0 +1,171 @@
+<?php
+// Database Connection
+$host = "localhost";
+$user = "root";
+$password = "";
+$database = "sacco_db";
+
+$conn = new mysqli($host, $user, $password, $database);
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Create Tables if Not Exist
+$conn->query("CREATE DATABASE IF NOT EXISTS sacco_db");
+$conn->query("USE sacco_db");
+
+$conn->query("CREATE TABLE IF NOT EXISTS members (
+    member_id INT AUTO_INCREMENT PRIMARY KEY,
+    full_name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    phone VARCHAR(15) NOT NULL,
+    address TEXT,
+    password VARCHAR(255) NOT NULL,
+    date_joined TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS loans (
+    loan_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    interest_rate DECIMAL(5,2) NOT NULL,
+    loan_term INT NOT NULL,
+    status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    FOREIGN KEY (member_id) REFERENCES members(member_id) ON DELETE CASCADE
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS savings (
+    savings_id INT AUTO_INCREMENT PRIMARY KEY,
+    member_id INT NOT NULL,
+    deposit_amount DECIMAL(10,2) NOT NULL,
+    deposit_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (member_id) REFERENCES members(member_id) ON DELETE CASCADE
+)");
+
+// Handle Registration
+if (isset($_POST['register'])) {
+    $full_name = $_POST['full_name'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $address = $_POST['address'];
+    $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
+
+    $sql = "INSERT INTO members (full_name, email, phone, address, password) 
+            VALUES ('$full_name', '$email', '$phone', '$address', '$password')";
+
+    if ($conn->query($sql) === TRUE) {
+        $message = "<p style='color:green;'>Registration successful!</p>";
+    } else {
+        $message = "<p style='color:red;'>Error: " . $conn->error . "</p>";
+    }
+}
+
+// Handle Loan Request
+if (isset($_POST['apply_loan'])) {
+    $member_id = $_POST['member_id'];
+    $amount = $_POST['amount'];
+    $interest_rate = $_POST['interest_rate'];
+    $loan_term = $_POST['loan_term'];
+
+    $sql = "INSERT INTO loans (member_id, amount, interest_rate, loan_term, status) 
+            VALUES ('$member_id', '$amount', '$interest_rate', '$loan_term', 'Pending')";
+
+    if ($conn->query($sql) === TRUE) {
+        $message = "<p style='color:green;'>Loan application submitted successfully!</p>";
+    } else {
+        $message = "<p style='color:red;'>Error: " . $conn->error . "</p>";
+    }
+}
+
+// Handle Savings Deposit
+if (isset($_POST['deposit_savings'])) {
+    $member_id = $_POST['member_id'];
+    $deposit_amount = $_POST['deposit_amount'];
+
+    $sql = "INSERT INTO savings (member_id, deposit_amount) VALUES ('$member_id', '$deposit_amount')";
+
+    if ($conn->query($sql) === TRUE) {
+        $message = "<p style='color:green;'>Savings deposited successfully!</p>";
+    } else {
+        $message = "<p style='color:red;'>Error: " . $conn->error . "</p>";
+    }
+}
+
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sacco Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('background.jpg') no-repeat center center fixed;
+            background-size: cover;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 50%;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 50px;
+        }
+        input, button {
+            width: 80%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background: green;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background: darkgreen;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Member Registration</h2>
+        <?php if (isset($message)) echo $message; ?>
+        <form method="POST">
+            <input type="text" name="full_name" placeholder="Full Name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="text" name="address" placeholder="Address">
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" name="register">Register</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Apply for a Loan</h2>
+        <form method="POST">
+            <input type="number" name="member_id" placeholder="Member ID" required>
+            <input type="number" step="0.01" name="amount" placeholder="Loan Amount" required>
+            <input type="number" step="0.01" name="interest_rate" placeholder="Interest Rate (%)" required>
+            <input type="number" name="loan_term" placeholder="Loan Term (Months)" required>
+            <button type="submit" name="apply_loan">Apply Loan</button>
+        </form>
+    </div>
+
+    <div class="container">
+        <h2>Deposit Savings</h2>
+        <form method="POST">
+            <input type="number" name="member_id" placeholder="Member ID" required>
+            <input type="number" step="0.01" name="deposit_amount" placeholder="Deposit Amount" required>
+            <button type="submit" name="deposit_savings">Deposit</button>
+        </form>
+    </div>
+</body>
+</html>
