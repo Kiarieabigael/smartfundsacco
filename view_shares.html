@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Shares</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lavender;
+            color: #4b0082;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: inline-block;
+        }
+        button {
+            background-color: #4b0082;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #6a5acd;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>View Shares</h1>
+        <div id="sharesDetails">
+            <p>Share Balance: <span id="shareBalance">Loading...</span></p>
+            <p>Last Deposit Date: <span id="lastDepositDate">Loading...</span></p>
+        </div>
+        <button onclick="window.location.href='index.html'">Back</button>
+    </div>
+
+    <script>
+        const userId = 1;  // Assume a fixed user ID for simplicity
+
+        async function fetchShares() {
+            const response = await fetch(`/get_shares?user_id=${userId}`);
+            const result = await response.json();
+            document.getElementById('shareBalance').textContent = result.share_balance;
+            document.getElementById('lastDepositDate').textContent = result.share_deposit_date || 'N/A';
+        }
+
+        fetchShares();  // Fetch shares data when the page loads
+    </script>
+</body>
+</html>
